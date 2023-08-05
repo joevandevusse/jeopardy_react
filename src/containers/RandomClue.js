@@ -102,10 +102,20 @@ const RandomClue = () => {
     const userEnteredAnswer = userAnswer.trim().toLowerCase();
 
     if (compareAnswers(correctAnswer, userEnteredAnswer)) {
-      setAnswerResult('correct');
+      setAnswerResult({ 
+        status: 'correct', 
+        message: 'Correct!' 
+      });
     } else {
-      setAnswerResult('incorrect');
+      setAnswerResult({ 
+        status: 'incorrect', 
+        message: `Incorrect. The correct answer is "${data.answer}"` 
+      });
     }
+    setTimeout(() => {
+      setAnswerResult(null); // Clear the answerResult after 2 seconds
+      fetchNewQuestion(); // Fetch a new question when the answer is correct
+    }, 2000);
   };
 
   const compareAnswers = (correctAnswer, userEnteredAnswer) => {
@@ -130,16 +140,6 @@ const RandomClue = () => {
 
     return finalCleanedCorrectAnswer.toLowerCase() === finalCleanedUserAnswer.toLowerCase();
   };
-
-  // Only takes effect when answerResult changes
-  useEffect(() => {
-    //if (answerResult === 'correct') {
-      const timeout = setTimeout(() => {
-        fetchNewQuestion();
-      }, 2000);
-      return () => clearTimeout(timeout);
-    //}
-  }, [answerResult]);
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
@@ -180,13 +180,15 @@ const RandomClue = () => {
                 {data.question}
               </Typography>
               <TextField
-                className={`${classes.textField} ${classes.darkTextField} ${answerResult === 'correct' ? classes.correctAnswer : answerResult === 'incorrect' ? classes.incorrectAnswer : ''}`}
+                className={`${classes.textField} ${classes.darkTextField} 
+                  ${answerResult?.status === 'correct' ? classes.correctAnswer : 
+                  answerResult?.status === 'incorrect' ? classes.incorrectAnswer : ''}`}
                 label="Your Answer"
                 variant="outlined"
                 value={userAnswer}
                 onChange={handleUserAnswerChange}
                 onKeyPress={handleKeyPress}
-                disabled={answerResult === 'correct' || answerResult === 'incorrect'}
+                disabled={answerResult?.status === 'correct' || answerResult?.status === 'incorrect'}
                 autoComplete="off" // Disable auto-completion to prevent background color glitch
               />
               <div className={classes.submitButtonContainer}>
@@ -196,22 +198,22 @@ const RandomClue = () => {
               </div>
               {/* Correct Answer Snackbar */}
               <Snackbar
-                open={answerResult === 'correct'}
+                open={answerResult?.status === 'correct'}
                 autoHideDuration={2000}
                 onClose={() => setAnswerResult(null)}
               >
                 <MuiAlert elevation={6} variant="filled" onClose={() => setAnswerResult(null)} severity="success">
-                  Correct!
+                  {answerResult?.message}
                 </MuiAlert>
               </Snackbar>
               {/* Incorrect Answer Snackbar */}
               <Snackbar
-                open={answerResult === 'incorrect'}
+                open={answerResult?.status === 'incorrect'}
                 autoHideDuration={2000}
                 onClose={() => setAnswerResult(null)}
               >
                 <MuiAlert elevation={6} variant="filled" onClose={() => setAnswerResult(null)} severity="error">
-                  Incorrect!
+                {answerResult?.message}
                 </MuiAlert>
               </Snackbar>
             </div>
