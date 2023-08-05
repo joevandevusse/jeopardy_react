@@ -6,6 +6,8 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
   centerContainer: {
@@ -52,15 +54,21 @@ const useStyles = makeStyles((theme) => ({
   whiteText: {
     color: '#ffffff', // Set the text color to white
   },
-  correctAnswer: {
-    background: '#7cff7c', // Set the background color to green for correct answer
+  correctText: {
+    color: '#7cff7c', // Set the background color to green for correct answer
   },
-  incorrectAnswer: {
-    background: '#ff7c7c', // Set the background color to red for incorrect answer
+  incorrectText: {
+    color: '#ff7c7c', // Set the background color to red for incorrect answer
+  },
+  infoContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(1),
+    color: 'white',
   },
 }));
 
-const NewPage = () => {
+const RandomClue = () => {
   const classes = useStyles();
   const [data, setData] = useState({});
   const [userAnswer, setUserAnswer] = useState('');
@@ -68,19 +76,22 @@ const NewPage = () => {
   const [answerResult, setAnswerResult] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('https://jservice.io/api/random');
-        setData(response.data[0]);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      }
-    };
+    fetchNewQuestion(); // Fetch initial question only once on mount
+  }, []); // Empty dependency array means this effect runs only once on mount
 
-    fetchData();
-  }, []);
+  const fetchNewQuestion = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get('https://jservice.io/api/random');
+      console.log(response);
+      setData(response.data[0]);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+    setLoading(false);
+    setAnswerResult(null);
+    setUserAnswer('');
+  };
 
   const handleUserAnswerChange = (event) => {
     setUserAnswer(event.target.value);
@@ -89,33 +100,51 @@ const NewPage = () => {
   const checkAnswer = () => {
     const correctAnswer = data.answer.toLowerCase();
     const userEnteredAnswer = userAnswer.trim().toLowerCase();
-    if (correctAnswer === userEnteredAnswer) {
+
+    if (compareAnswers(correctAnswer, userEnteredAnswer)) {
       setAnswerResult('correct');
     } else {
       setAnswerResult('incorrect');
     }
-    // Clear the user's answer after checking
-    setUserAnswer('');
   };
 
-  useEffect(() => {
-    if (answerResult) {
-      const timeout = setTimeout(() => {
-        setAnswerResult(null);
-      }, 2000);
+  const compareAnswers = (correctAnswer, userEnteredAnswer) => {
+    // Remove common words from both answers
+    const commonWords = ['a', 'an', 'the'];
+    const regex = new RegExp(`\\b(${commonWords.join('|')})\\b`, 'gi');
 
+    const cleanedCorrectAnswer = correctAnswer.replace(regex, '').trim();
+    const cleanedUserAnswer = userEnteredAnswer.replace(regex, '').trim();
+
+    // Remove special characters from both answers
+    const specialCharsRegex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
+
+    const finalCorrectAnswer = cleanedCorrectAnswer.replace(specialCharsRegex, '');
+    const finalUserAnswer = cleanedUserAnswer.replace(specialCharsRegex, '');
+
+    // Remove HTML tags from both answers
+    const htmlTagsRegex = /<[^>]+>/g;
+
+    const finalCleanedCorrectAnswer = finalCorrectAnswer.replace(htmlTagsRegex, '');
+    const finalCleanedUserAnswer = finalUserAnswer.replace(htmlTagsRegex, '');
+
+    return finalCleanedCorrectAnswer.toLowerCase() === finalCleanedUserAnswer.toLowerCase();
+  };
+
+  // Only takes effect when answerResult changes
+  useEffect(() => {
+    //if (answerResult === 'correct') {
+      const timeout = setTimeout(() => {
+        fetchNewQuestion();
+      }, 2000);
       return () => clearTimeout(timeout);
-    }
+    //}
   }, [answerResult]);
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       checkAnswer();
     }
-  };
-
-  const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
   const theme = createTheme({
@@ -136,8 +165,16 @@ const NewPage = () => {
             <CircularProgress />
           ) : (
             <div>
+              <div className={classes.infoContainer}>
+                <Typography variant="subtitle1" style={{ textAlign: 'left' }}>
+                  Year: {data.airdate ? new Date(data.airdate).getFullYear() : ''}
+                </Typography>
+                <Typography variant="subtitle1" style={{ textAlign: 'right' }}>
+                  Value: ${data.value || ''}
+                </Typography>
+              </div>
               <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
-                {capitalizeFirstLetter(data.category?.title)}
+                {data.category?.title.toUpperCase()}
               </Typography>
               <Typography className={classes.whiteText} variant="body1">
                 {data.question}
@@ -157,6 +194,26 @@ const NewPage = () => {
                   Submit
                 </Button>
               </div>
+              {/* Correct Answer Snackbar */}
+              <Snackbar
+                open={answerResult === 'correct'}
+                autoHideDuration={2000}
+                onClose={() => setAnswerResult(null)}
+              >
+                <MuiAlert elevation={6} variant="filled" onClose={() => setAnswerResult(null)} severity="success">
+                  Correct!
+                </MuiAlert>
+              </Snackbar>
+              {/* Incorrect Answer Snackbar */}
+              <Snackbar
+                open={answerResult === 'incorrect'}
+                autoHideDuration={2000}
+                onClose={() => setAnswerResult(null)}
+              >
+                <MuiAlert elevation={6} variant="filled" onClose={() => setAnswerResult(null)} severity="error">
+                  Incorrect!
+                </MuiAlert>
+              </Snackbar>
             </div>
           )}
         </div>
@@ -179,4 +236,4 @@ const NewPage = () => {
   );
 };
 
-export default NewPage;
+export default RandomClue;
