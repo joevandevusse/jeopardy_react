@@ -15,7 +15,14 @@ export default function HomePage() {
           Jeopardy Study Tool
         </Typography>
         <div className={classes.buttonContainer}>
-          <Button className={classes.button} variant="contained">Study</Button>
+          <Button 
+            className={classes.button} 
+            variant="contained"
+            component={Link}
+            to="/firebase-clue"
+          >
+            Study
+          </Button>
           <Button className={classes.button} variant="contained">Play</Button>
           <Button 
             className={classes.button} 
