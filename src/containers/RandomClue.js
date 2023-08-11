@@ -11,6 +11,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import { useStyles } from '../styles/clueStyles';
 // Import the theme from the separate theme.js file 
 import { theme } from '../styles/darkTheme'; 
+import compareAnswers from '../utils/compareUtils';
 
 const RandomClue = () => {
   const classes = useStyles();
@@ -62,30 +63,30 @@ const RandomClue = () => {
     }, 2000);
   };
 
-  const compareAnswers = (correctAnswer, userEnteredAnswer) => {
-    // Remove common words from both answers
-    const commonWords = ['a', 'an', 'the'];
-    const regex = new RegExp(`\\b(${commonWords.join('|')})\\b`, 'gi');
+  // const compareAnswers = (correctAnswer, userEnteredAnswer) => {
+  //   // Remove common words from both answers
+  //   const commonWords = ['a', 'an', 'the'];
+  //   const regex = new RegExp(`\\b(${commonWords.join('|')})\\b`, 'gi');
 
-    const cleanedCorrectAnswer = correctAnswer.replace(regex, '').trim();
-    const cleanedUserAnswer = userEnteredAnswer.replace(regex, '').trim();
+  //   const cleanedCorrectAnswer = correctAnswer.replace(regex, '').trim();
+  //   const cleanedUserAnswer = userEnteredAnswer.replace(regex, '').trim();
 
-    // Remove special characters from both answers
-    const specialCharsRegex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
+  //   // Remove special characters from both answers
+  //   const specialCharsRegex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
 
-    const finalCorrectAnswer = cleanedCorrectAnswer.replace(specialCharsRegex, '');
-    const finalUserAnswer = cleanedUserAnswer.replace(specialCharsRegex, '');
+  //   const finalCorrectAnswer = cleanedCorrectAnswer.replace(specialCharsRegex, '');
+  //   const finalUserAnswer = cleanedUserAnswer.replace(specialCharsRegex, '');
 
-    // Remove HTML tags from both answers
-    const htmlTagsRegex = /<[^>]+>/g;
+  //   // Remove HTML tags from both answers
+  //   const htmlTagsRegex = /<[^>]+>/g;
 
-    const finalCleanedCorrectAnswer = finalCorrectAnswer.replace(htmlTagsRegex, '');
-    const finalCleanedUserAnswer = finalUserAnswer.replace(htmlTagsRegex, '');
+  //   const finalCleanedCorrectAnswer = finalCorrectAnswer.replace(htmlTagsRegex, '');
+  //   const finalCleanedUserAnswer = finalUserAnswer.replace(htmlTagsRegex, '');
 
-    // Check last names
+  //   // Check last names
 
-    return finalCleanedCorrectAnswer.toLowerCase() === finalCleanedUserAnswer.toLowerCase();
-  };
+  //   return finalCleanedCorrectAnswer.toLowerCase() === finalCleanedUserAnswer.toLowerCase();
+  // };
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
