@@ -1,4 +1,8 @@
 function compareAnswers(correctAnswer, userEnteredAnswer) {
+  if (!correctAnswer || !userEnteredAnswer) {
+    return false;
+  }
+
   // Remove common words from both answers
   const commonWords = ['a', 'an', 'the'];
   const regex = new RegExp(`\\b(${commonWords.join('|')})\\b`, 'gi');
