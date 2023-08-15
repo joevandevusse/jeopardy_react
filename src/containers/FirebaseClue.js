@@ -16,19 +16,24 @@ import { useStyles } from '../styles/clueStyles';
 // Import the theme from the separate theme.js file 
 import { theme } from '../styles/darkTheme'; 
 import compareAnswers from '../utils/compareUtils';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { Queue } from '../utils/Queue';
 
 const FirebaseClue = () => {
   const classes = useStyles();
   // State to store the data retrieved from Firebase
   const [loading, setLoading] = useState(false);
-  const [clues, setClues] = useState([]);
-  const [curClueIndex, setCurClueIndex] = useState(0);
+  const [clueQueue, setClueQueue] = useState(null);
+  //const [curClueIndex, setCurClueIndex] = useState(0);
   const [curClue, setCurClue] = useState({ question: '', answer: '' });
   const [userAnswer, setUserAnswer] = useState('');
   const [answerResult, setAnswerResult] = useState(null);
   const [gameOver, setGameOver] = useState(false);
-  const [originalSize, setOriginalSize] = useState(0);
+  //const [originalSize, setOriginalSize] = useState(0);
   const [numCorrect, setNumCorrect] = useState(0);
+  const [repeatToggle, setRepeatToggle] = useState(false);
+  //const [questionsAsked, setQuestionsAsked] = useState(1);
 
   // Initialize Firebase
   if (!firebase.apps.length) {
@@ -46,10 +51,18 @@ const FirebaseClue = () => {
       .then((snapshot) => {
         const fetchedData = snapshot.val();
         const shuffledArray = fetchedData.sort((a, b) => 0.5 - Math.random());
-        setOriginalSize(shuffledArray.length);
-        setClues(shuffledArray);
-        setCurClueIndex(0);
-        setCurClue(shuffledArray.at(0));
+        let clueQueue = new Queue();
+        shuffledArray.forEach((clue) => {
+          clueQueue.enqueue(clue);
+        });
+        setClueQueue(clueQueue);
+        //setOriginalSize(shuffledArray.length);
+        //setOriginalSize(clueQueue.length);
+        //setClues(shuffledArray);
+        //setCurClueIndex(0);
+        //setCurClue(shuffledArray.at(0));
+
+        setCurClue(clueQueue.dequeue());
         console.log('fetched data', fetchedData);
       })
       .catch((error) => {
@@ -74,7 +87,6 @@ const FirebaseClue = () => {
     const userEnteredAnswer = userAnswer ? 
       userAnswer.trim().toLowerCase() : '';
 
-    console.log(userAnswer);
     if (compareAnswers(correctAnswer, userEnteredAnswer)) {
       setAnswerResult({ 
         status: 'correct', 
@@ -96,19 +108,43 @@ const FirebaseClue = () => {
 
   const fetchNewQuestion = () => {
     //setUserAnswer('');
-    if (clues.length === 1) {
+    // if (clues.length === 1) {
+    //   setGameOver(true);
+    // }
+
+    let nextClue = clueQueue.dequeue();
+    if (clueQueue.isEmpty) {
       setGameOver(true);
     }
-    console.log('current clue', curClue);
     console.log("fetch new question");
+    console.log('current clue', nextClue);
     // Remove used clue from array
-    console.log('clues', clues);
-    const cluesWithUsedRemoved = clues.slice(1, clues.length);
-    setClues(cluesWithUsedRemoved);
-    console.log('clues', cluesWithUsedRemoved);
-    setCurClueIndex(curClueIndex + 1);
-    setCurClue(clues.at(curClueIndex));
-    console.log('current clue', curClue);
+    //console.log('clues', clues);
+    console.log('clues', clueQueue);
+    //const clueToBeRemoved = clues.at(0);
+    //const clueToBeRemoved = clueQueue.peek();
+    // Remove first clue
+    //const cluesWithUsedRemoved = clues.slice(1, clues.length);
+    //clueQueue.dequeue();
+    //setClues(cluesWithUsedRemoved);
+    setClueQueue(clueQueue);
+    //console.log('clues', cluesWithUsedRemoved);
+    console.log('clues', clueQueue);
+    //setCurClueIndex(curClueIndex + 1);
+    //setCurClue(clueQueue.peek());
+    setCurClue(nextClue);
+
+    if (repeatToggle) {
+      //const cluesWithWrongReAdded = clues.push(clueToBeRemoved);
+      clueQueue.enqueue(nextClue);
+      //setClues(cluesWithWrongReAdded);
+      setClueQueue(clueQueue);
+      //setOriginalSize(originalSize + 1);
+    }
+    //console.log("Original size: ", originalSize);
+    //console.log("Correct count: ", numCorrect);
+    //console.log((originalSize - clues.length + 1)/originalSize);
+    //setQuestionsAsked(questionsAsked + 1);
   };
 
   const handleUserAnswerChange = (event) => {
@@ -116,11 +152,26 @@ const FirebaseClue = () => {
     setUserAnswer(event.target.value);
   };
 
-  if (gameOver) {
+  const handleRepeatToggleChange = () => {
+    setRepeatToggle(!repeatToggle);
+  }
+
+  if (!clueQueue) {
+    return <p>Loading...</p>;
+  } else if (gameOver) {
     return (<p>Hi</p>)
   } else {
     return (
       <ThemeProvider theme={theme}>
+        {/* Toggle switch */}
+        <FormControlLabel
+          className={`${classes.whiteText}`}
+          control={<Switch checked={repeatToggle} onChange={handleRepeatToggleChange} />}
+          label="Repeat Wrongs"
+          labelPlacement="start"
+          style={{ position: 'absolute', top: '10px', left: '10px' }}
+          variant="subtitle1" 
+        />
         <div className={classes.centerContainer}>
           <div className={classes.contentContainer}>
             {loading ? (
@@ -128,11 +179,15 @@ const FirebaseClue = () => {
             ) : (
               <div>
                 <div className={classes.infoContainer}>
-                  <Typography variant="subtitle1" style={{ textAlign: 'left' }}>
-                    Question: {originalSize - clues.length + 1}/{originalSize}
+                  <Typography variant="subtitle1" style={{ textAlign: 'left', marginRight: '16px' }}>
+                    {/*Question: {originalSize - clues.length + 1}/{originalSize}*/}
+                    {/*Question: {questionsAsked}/{originalSize}*/}
+                    Question: {clueQueue.headPosition}/{clueQueue.tailPosition}
                   </Typography>
-                  <Typography variant="subtitle1" style={{ textAlign: 'right' }}>
-                    Score: {(numCorrect / (originalSize - clues.length + 1)).toFixed(2) * 100}%
+                  <Typography variant="subtitle1" style={{ textAlign: 'right' , marginLeft: '16px' }}>
+                    {/*Score: {(numCorrect / (originalSize - clues.length + 1)).toFixed(2) * 100}%*/}
+                    {/*Score: {(numCorrect / questionsAsked).toFixed(2) * 100}%*/}
+                    Score: {(numCorrect / (clueQueue.headPosition)).toFixed(2) * 100}%
                   </Typography>
                 </div>
                 <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
@@ -203,5 +258,4 @@ const FirebaseClue = () => {
   }
 };
 
-// Data from Firebase: {JSON.stringify(data)}
 export default FirebaseClue;
