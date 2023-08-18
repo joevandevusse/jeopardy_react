@@ -29,6 +29,7 @@ const FirebaseClue = () => {
   const [curClue, setCurClue] = useState({ question: '', answer: '' });
   const [userAnswer, setUserAnswer] = useState('');
   const [answerResult, setAnswerResult] = useState(null);
+  const [lastCorrect, setLastCorrect] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   //const [originalSize, setOriginalSize] = useState(0);
   const [numCorrect, setNumCorrect] = useState(0);
@@ -55,15 +56,8 @@ const FirebaseClue = () => {
         shuffledArray.forEach((clue) => {
           clueQueue.enqueue(clue);
         });
-        setClueQueue(clueQueue);
-        //setOriginalSize(shuffledArray.length);
-        //setOriginalSize(clueQueue.length);
-        //setClues(shuffledArray);
-        //setCurClueIndex(0);
-        //setCurClue(shuffledArray.at(0));
-
         setCurClue(clueQueue.dequeue());
-        console.log('fetched data', fetchedData);
+        setClueQueue(clueQueue);
       })
       .catch((error) => {
         console.error('Error fetching data from Firebase:', error);
@@ -86,19 +80,22 @@ const FirebaseClue = () => {
     const correctAnswer = curClue?.answer.toLowerCase();
     const userEnteredAnswer = userAnswer ? 
       userAnswer.trim().toLowerCase() : '';
-
+    
     if (compareAnswers(correctAnswer, userEnteredAnswer)) {
       setAnswerResult({ 
         status: 'correct', 
         message: 'Correct!' 
       });
       setNumCorrect(numCorrect + 1);
+      setLastCorrect(true);
     } else {
       setAnswerResult({ 
         status: 'incorrect', 
         message: `Incorrect. The correct answer is "${curClue?.answer}"` 
       });
+      setLastCorrect(false);
     }
+    
     setTimeout(() => {
       setAnswerResult(null); // Clear the answerResult after 2 seconds
       setUserAnswer('');
@@ -107,11 +104,8 @@ const FirebaseClue = () => {
   };
 
   const fetchNewQuestion = () => {
-    //setUserAnswer('');
-    // if (clues.length === 1) {
-    //   setGameOver(true);
-    // }
-
+    console.log('was last correct', lastCorrect);
+    console.log('clues', clueQueue);
     let nextClue = clueQueue.dequeue();
     if (clueQueue.isEmpty) {
       setGameOver(true);
@@ -119,32 +113,15 @@ const FirebaseClue = () => {
     console.log("fetch new question");
     console.log('current clue', nextClue);
     // Remove used clue from array
-    //console.log('clues', clues);
-    console.log('clues', clueQueue);
-    //const clueToBeRemoved = clues.at(0);
-    //const clueToBeRemoved = clueQueue.peek();
-    // Remove first clue
-    //const cluesWithUsedRemoved = clues.slice(1, clues.length);
-    //clueQueue.dequeue();
-    //setClues(cluesWithUsedRemoved);
     setClueQueue(clueQueue);
-    //console.log('clues', cluesWithUsedRemoved);
-    console.log('clues', clueQueue);
-    //setCurClueIndex(curClueIndex + 1);
-    //setCurClue(clueQueue.peek());
     setCurClue(nextClue);
 
-    if (repeatToggle) {
-      //const cluesWithWrongReAdded = clues.push(clueToBeRemoved);
+    console.log("should repeat?", repeatToggle, !lastCorrect);
+    if (repeatToggle && !lastCorrect) {
       clueQueue.enqueue(nextClue);
-      //setClues(cluesWithWrongReAdded);
       setClueQueue(clueQueue);
-      //setOriginalSize(originalSize + 1);
     }
-    //console.log("Original size: ", originalSize);
-    //console.log("Correct count: ", numCorrect);
-    //console.log((originalSize - clues.length + 1)/originalSize);
-    //setQuestionsAsked(questionsAsked + 1);
+    console.log('clues', clueQueue);
   };
 
   const handleUserAnswerChange = (event) => {
@@ -154,7 +131,7 @@ const FirebaseClue = () => {
 
   const handleRepeatToggleChange = () => {
     setRepeatToggle(!repeatToggle);
-  }
+  };
 
   if (!clueQueue) {
     return <p>Loading...</p>;
@@ -219,8 +196,9 @@ const FirebaseClue = () => {
                   autoHideDuration={2000}
                   onClose={() => setAnswerResult(null)}
                 >
-                  <MuiAlert elevation={6} variant="filled" onClose={() => 
-                    setAnswerResult(null)} severity="success">
+                  <MuiAlert elevation={6} variant="filled" 
+                    onClose={() => setAnswerResult(null)} 
+                    severity="success">
                   {answerResult?.message}
                   </MuiAlert>
                 </Snackbar>
@@ -230,8 +208,9 @@ const FirebaseClue = () => {
                   autoHideDuration={2000}
                   onClose={() => setAnswerResult(null)}
                 >
-                  <MuiAlert elevation={6} variant="filled" onClose={() => 
-                    setAnswerResult(null)} severity="error">
+                  <MuiAlert elevation={6} variant="filled" 
+                    onClose={() => setAnswerResult(null)} 
+                    severity="error">
                   {answerResult?.message}
                   </MuiAlert>
                 </Snackbar>
