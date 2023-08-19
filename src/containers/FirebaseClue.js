@@ -4,7 +4,8 @@ import firebase from 'firebase/compat/app';
 // Also update the import for the specific Firebase service you need
 import 'firebase/compat/database'; 
 import Typography from '@material-ui/core/Typography';
-import firebaseConfig from '../config/firebaseConfig'; // Adjust the path to match your file structure
+// Adjust the path to match your file structure
+import firebaseConfig from '../config/firebaseConfig'; 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -18,6 +19,7 @@ import { theme } from '../styles/darkTheme';
 import compareAnswers from '../utils/compareUtils';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { useLocation } from 'react-router-dom';
 
 const FirebaseClue = () => {
   // console.count('useEffect calls');
@@ -36,9 +38,12 @@ const FirebaseClue = () => {
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
+  const location = useLocation();
+  const category = location.state;
 
   // Fetch data from Firebase database on component mount
   useEffect(() => {
+    console.log(category);
     setLoading(true);
     const database = firebase.database();
     const dataRef = database.ref('/'); 
@@ -46,10 +51,12 @@ const FirebaseClue = () => {
     dataRef.once('value')
       .then((snapshot) => {
         const fetchedData = snapshot.val();
-        const shuffledArray = fetchedData.sort((a, b) => 0.5 - Math.random());
+        const fetchedCategoryData = fetchedData[category];
+        console.log(fetchedCategoryData);
+        const shuffledArray = fetchedCategoryData.sort((a, b) => 0.5 - Math.random());
         setCurClue(shuffledArray[0]);
         setClueQueue(shuffledArray);
-        console.log(shuffledArray);
+        //console.log(shuffledArray);
       })
       .catch((error) => {
         console.error('Error fetching data from Firebase:', error);
@@ -57,7 +64,7 @@ const FirebaseClue = () => {
       .finally(() => {
         setLoading(false)
       });
-  }, []);
+  }, [category]);
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
@@ -149,7 +156,7 @@ const FirebaseClue = () => {
                   </Typography>
                 </div>
                 <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
-                  African Capitals
+                  {transformCategory(category)}
                 </Typography>
                 <Typography className={classes.whiteText} variant="body1">
                   {curClue?.question}
@@ -221,6 +228,7 @@ const FirebaseClue = () => {
 export default FirebaseClue;
 
 function Loading() {
+  const classes = useStyles();
   return (
   <div className={classes.centerContainer}>
       <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
@@ -231,6 +239,7 @@ function Loading() {
 }
 
 function GameOver(props) {
+  const classes = useStyles();
   return (
     <div className={classes.centerContainer}>
       <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
@@ -241,4 +250,14 @@ function GameOver(props) {
       </Typography>
     </div>
   );
+}
+
+function transformCategory(underscoredCategory) {
+  const categoryTokens = underscoredCategory.split('_');
+  const upperCaseTokens = categoryTokens.map(word => {
+    const capitalizedFirst = word.charAt(0).toUpperCase();
+    const rest = word.slice(1).toLowerCase();
+    return capitalizedFirst + rest;
+  })
+  return upperCaseTokens.join(" ")
 }

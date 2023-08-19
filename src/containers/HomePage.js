@@ -23,6 +23,14 @@ export default function HomePage() {
           >
             Study
           </Button>
+          <Button 
+            className={classes.button} 
+            variant="contained"
+            component={Link}
+            to="/category-picker"
+          >
+            Category Test
+          </Button>
           <Button className={classes.button} variant="contained">Play</Button>
           <Button 
             className={classes.button} 
