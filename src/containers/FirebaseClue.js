@@ -18,23 +18,19 @@ import { theme } from '../styles/darkTheme';
 import compareAnswers from '../utils/compareUtils';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { Queue } from '../utils/Queue';
 
 const FirebaseClue = () => {
+  // console.count('useEffect calls');
   const classes = useStyles();
-  // State to store the data retrieved from Firebase
   const [loading, setLoading] = useState(false);
-  const [clueQueue, setClueQueue] = useState(null);
-  //const [curClueIndex, setCurClueIndex] = useState(0);
+  const [clueQueue, setClueQueue] = useState([]);
   const [curClue, setCurClue] = useState({ question: '', answer: '' });
   const [userAnswer, setUserAnswer] = useState('');
-  const [answerResult, setAnswerResult] = useState(null);
-  const [lastCorrect, setLastCorrect] = useState(false);
+  const [answerResult, setAnswerResult] = useState('');
   const [gameOver, setGameOver] = useState(false);
-  //const [originalSize, setOriginalSize] = useState(0);
   const [numCorrect, setNumCorrect] = useState(0);
   const [repeatToggle, setRepeatToggle] = useState(false);
-  //const [questionsAsked, setQuestionsAsked] = useState(1);
+  const [questionsAsked, setQuestionsAsked] = useState(0);
 
   // Initialize Firebase
   if (!firebase.apps.length) {
@@ -45,19 +41,15 @@ const FirebaseClue = () => {
   useEffect(() => {
     setLoading(true);
     const database = firebase.database();
-    // Replace 'your-data-path' with the actual path to your data in the database
     const dataRef = database.ref('/'); 
 
     dataRef.once('value')
       .then((snapshot) => {
         const fetchedData = snapshot.val();
         const shuffledArray = fetchedData.sort((a, b) => 0.5 - Math.random());
-        let clueQueue = new Queue();
-        shuffledArray.forEach((clue) => {
-          clueQueue.enqueue(clue);
-        });
-        setCurClue(clueQueue.dequeue());
-        setClueQueue(clueQueue);
+        setCurClue(shuffledArray[0]);
+        setClueQueue(shuffledArray);
+        console.log(shuffledArray);
       })
       .catch((error) => {
         console.error('Error fetching data from Firebase:', error);
@@ -65,8 +57,6 @@ const FirebaseClue = () => {
       .finally(() => {
         setLoading(false)
       });
-      
-      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleKeyPress = (event) => {
@@ -81,47 +71,43 @@ const FirebaseClue = () => {
     const userEnteredAnswer = userAnswer ? 
       userAnswer.trim().toLowerCase() : '';
     
+    setQuestionsAsked(questionsAsked + 1);
+    let isCorrect = true;
     if (compareAnswers(correctAnswer, userEnteredAnswer)) {
-      setAnswerResult({ 
-        status: 'correct', 
-        message: 'Correct!' 
-      });
+      setAnswerResult('Correct!');
       setNumCorrect(numCorrect + 1);
-      setLastCorrect(true);
     } else {
-      setAnswerResult({ 
-        status: 'incorrect', 
-        message: `Incorrect. The correct answer is "${curClue?.answer}"` 
-      });
-      setLastCorrect(false);
-    }
-    
+      setAnswerResult(`Incorrect. The correct answer is "${curClue?.answer}"`);
+      isCorrect = false;
+    }    
+  
     setTimeout(() => {
-      setAnswerResult(null); // Clear the answerResult after 2 seconds
+      // Clear the answerResult after 2 seconds
+      setAnswerResult('');
       setUserAnswer('');
-      fetchNewQuestion(); // Fetch a new question when the answer is correct
+      // Fetch a new question when the answer is correct
+      fetchNewQuestion(isCorrect); 
     }, 2000);
   };
 
-  const fetchNewQuestion = () => {
-    console.log('was last correct', lastCorrect);
-    console.log('clues', clueQueue);
-    let nextClue = clueQueue.dequeue();
-    if (clueQueue.isEmpty) {
+  const fetchNewQuestion = (wasCorrect) => {
+    if (clueQueue.length === 1) {
       setGameOver(true);
     }
-    console.log("fetch new question");
-    console.log('current clue', nextClue);
-    // Remove used clue from array
-    setClueQueue(clueQueue);
-    setCurClue(nextClue);
+    // Remove the first element from the queue
+    let updatedQueue = [...clueQueue];
+    updatedQueue.shift();
 
-    console.log("should repeat?", repeatToggle, !lastCorrect);
-    if (repeatToggle && !lastCorrect) {
-      clueQueue.enqueue(nextClue);
-      setClueQueue(clueQueue);
+    // Check if we need to repeat a wrong answer
+    console.log('toggle, wasCorrect', repeatToggle, wasCorrect);
+    if (repeatToggle && !wasCorrect) {
+      updatedQueue = [...updatedQueue, curClue];
     }
-    console.log('clues', clueQueue);
+
+    // Update currentClue and clueQueue states
+    setCurClue(updatedQueue[0]);
+    setClueQueue(updatedQueue);
+    console.log(clueQueue);
   };
 
   const handleUserAnswerChange = (event) => {
@@ -134,13 +120,27 @@ const FirebaseClue = () => {
   };
 
   if (!clueQueue) {
-    return <p>Loading...</p>;
+    return (
+    <div className={classes.centerContainer}>
+      <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
+        Loading...
+      </Typography>
+    </div>
+    )
   } else if (gameOver) {
-    return (<p>Hi</p>)
+    return (
+      <div className={classes.centerContainer}>
+        <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
+          Game Over!
+        </Typography>
+        <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
+          Final Score: {((numCorrect / (questionsAsked + 1)) * 100).toFixed(0)}%
+        </Typography>
+      </div>
+      )
   } else {
     return (
       <ThemeProvider theme={theme}>
-        {/* Toggle switch */}
         <FormControlLabel
           className={`${classes.whiteText}`}
           control={<Switch checked={repeatToggle} onChange={handleRepeatToggleChange} />}
@@ -157,14 +157,10 @@ const FirebaseClue = () => {
               <div>
                 <div className={classes.infoContainer}>
                   <Typography variant="subtitle1" style={{ textAlign: 'left', marginRight: '16px' }}>
-                    {/*Question: {originalSize - clues.length + 1}/{originalSize}*/}
-                    {/*Question: {questionsAsked}/{originalSize}*/}
-                    Question: {clueQueue.headPosition}/{clueQueue.tailPosition}
+                    Question: {questionsAsked + 1}/{questionsAsked + clueQueue.length}
                   </Typography>
                   <Typography variant="subtitle1" style={{ textAlign: 'right' , marginLeft: '16px' }}>
-                    {/*Score: {(numCorrect / (originalSize - clues.length + 1)).toFixed(2) * 100}%*/}
-                    {/*Score: {(numCorrect / questionsAsked).toFixed(2) * 100}%*/}
-                    Score: {(numCorrect / (clueQueue.headPosition)).toFixed(2) * 100}%
+                    Score: {((numCorrect / (questionsAsked + 1)) * 100).toFixed(0)}%
                   </Typography>
                 </div>
                 <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
@@ -175,14 +171,14 @@ const FirebaseClue = () => {
                 </Typography>
                 <TextField
                   className={`${classes.textField} ${classes.darkTextField} 
-                    ${answerResult?.status === 'correct' ? classes.correctAnswer : 
-                    answerResult?.status === 'incorrect' ? classes.incorrectAnswer : ''}`}
+                    ${answerResult === 'Correct!' ? classes.correctAnswer : 
+                    answerResult.startsWith('Incorrect') ? classes.incorrectAnswer : ''}`}
                   label="Your Answer"
                   variant="outlined"
                   value={userAnswer}
                   onChange={handleUserAnswerChange}
                   onKeyPress={handleKeyPress}
-                  disabled={answerResult?.status === 'correct' || answerResult?.status === 'incorrect'}
+                  disabled={answerResult === 'Correct' || answerResult.startsWith('Incorrect')}
                   autoComplete="off" // Disable auto-completion to prevent background color glitch
                 />
                 <div className={classes.submitButtonContainer}>
@@ -192,26 +188,26 @@ const FirebaseClue = () => {
                 </div>
                 {/* Correct Answer Snackbar */}
                 <Snackbar
-                  open={answerResult?.status === 'correct'}
+                  open={answerResult === 'Correct!'}
                   autoHideDuration={2000}
-                  onClose={() => setAnswerResult(null)}
+                  onClose={() => setAnswerResult('')}
                 >
                   <MuiAlert elevation={6} variant="filled" 
-                    onClose={() => setAnswerResult(null)} 
+                    onClose={() => setAnswerResult('')} 
                     severity="success">
-                  {answerResult?.message}
+                  {answerResult}
                   </MuiAlert>
                 </Snackbar>
                 {/* Incorrect Answer Snackbar */}
                 <Snackbar
-                  open={answerResult?.status === 'incorrect'}
+                  open={answerResult.startsWith('Incorrect')}
                   autoHideDuration={2000}
-                  onClose={() => setAnswerResult(null)}
+                  onClose={() => setAnswerResult('')}
                 >
                   <MuiAlert elevation={6} variant="filled" 
-                    onClose={() => setAnswerResult(null)} 
+                    onClose={() => setAnswerResult('')} 
                     severity="error">
-                  {answerResult?.message}
+                  {answerResult}
                   </MuiAlert>
                 </Snackbar>
               </div>
