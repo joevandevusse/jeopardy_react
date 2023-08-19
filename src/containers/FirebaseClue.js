@@ -120,24 +120,9 @@ const FirebaseClue = () => {
   };
 
   if (!clueQueue) {
-    return (
-    <div className={classes.centerContainer}>
-      <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
-        Loading...
-      </Typography>
-    </div>
-    )
+    return <Loading />
   } else if (gameOver) {
-    return (
-      <div className={classes.centerContainer}>
-        <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
-          Game Over!
-        </Typography>
-        <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
-          Final Score: {((numCorrect / (questionsAsked + 1)) * 100).toFixed(0)}%
-        </Typography>
-      </div>
-      )
+    return <GameOver finalScore={`{((numCorrect / (questionsAsked + 1)) * 100).toFixed(0)}%`} />
   } else {
     return (
       <ThemeProvider theme={theme}>
@@ -234,3 +219,26 @@ const FirebaseClue = () => {
 };
 
 export default FirebaseClue;
+
+function Loading() {
+  return (
+  <div className={classes.centerContainer}>
+      <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
+        Loading...
+      </Typography>
+    </div>
+  );
+}
+
+function GameOver(props) {
+  return (
+    <div className={classes.centerContainer}>
+      <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
+        Game Over!
+      </Typography>
+      <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
+        Final Score: {props.finalScore}
+      </Typography>
+    </div>
+  );
+}
