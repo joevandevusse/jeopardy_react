@@ -20,6 +20,7 @@ import compareAnswers from '../utils/compareUtils';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { useLocation } from 'react-router-dom';
+import categoryConfig from '../config/categoryConfig'; 
 
 const FirebaseClue = () => {
   // console.count('useEffect calls');
@@ -156,7 +157,7 @@ const FirebaseClue = () => {
                   </Typography>
                 </div>
                 <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
-                  {transformCategory(category)}
+                  {categoryConfig[category]}
                 </Typography>
                 <Typography className={classes.whiteText} variant="body1">
                   {curClue?.question}
@@ -252,7 +253,7 @@ function GameOver(props) {
   );
 }
 
-function transformCategory(underscoredCategory) {
+/*function transformCategory(underscoredCategory) {
   const categoryTokens = underscoredCategory.split('_');
   const upperCaseTokens = categoryTokens.map(word => {
     const capitalizedFirst = word.charAt(0).toUpperCase();
@@ -260,4 +261,4 @@ function transformCategory(underscoredCategory) {
     return capitalizedFirst + rest;
   })
   return upperCaseTokens.join(" ")
-}
+}*/
