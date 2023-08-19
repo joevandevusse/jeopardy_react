@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom'; // Import the Link component
@@ -19,7 +18,7 @@ export default function HomePage() {
             className={classes.button} 
             variant="contained"
             component={Link}
-            to="/firebase-clue"
+            to="/firebase-clue" // Should be replaced by categories
           >
             Study
           </Button>
@@ -27,10 +26,11 @@ export default function HomePage() {
             className={classes.button} 
             variant="contained"
             component={Link}
-            to="/category-picker"
+            to="/category-picker" // Just for testing
           >
             Category Test
           </Button>
+          {/* Future - actual Jeopardy! games*/}
           <Button className={classes.button} variant="contained">Play</Button>
           <Button 
             className={classes.button} 
