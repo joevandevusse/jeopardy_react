@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 
 export default function CategoryPicker() {
-  //const classes = homeStyles();
+  const classes = homeStyles();
   console.log(categories);
   return (
     <ThemeProvider theme={theme}>
@@ -46,17 +46,25 @@ export default function CategoryPicker() {
           </div>  
         </span>
       </div> */}  
-
+      <Typography 
+        className={classes.title} 
+        variant="h2" 
+        align="center" 
+      >
+        Categories
+      </Typography>
       <Container maxWidth="md">
-      <Grid container spacing={3}>
+      <Grid container spacing={3} alignItems="flex-start">
           {categories.map((category) => (
-            <Grid item xs={6} key={category.title}> 
-              {/* Define the width for each category */}
-              <Category
-                key={category.title}
-                title={category.title}
-                quizzes={category.quizzes}
-              />
+            <Grid item xs={6} key={category.title}>
+              <Box className={classes.categoryContainer}> 
+                {/* Define the width for each category */}
+                <Category
+                  key={category.title}
+                  title={category.title}
+                  quizzes={category.quizzes}
+                />
+              </Box>
             </Grid>
           ))}
         </Grid>

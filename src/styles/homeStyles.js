@@ -23,4 +23,13 @@ export const homeStyles = makeStyles((theme) => ({
   button: {
     maxWidth: '200px',
   },
+  categoryContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between', // Align items within the category container
+    height: '100%',
+  },
+  categoryTitle: {
+    margin: `${theme.spacing(2)}px 0`,
+  }
 }));
