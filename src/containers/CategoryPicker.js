@@ -1,19 +1,17 @@
 //import Button from '@mui/material/Button';
 import Typography from '@material-ui/core/Typography';
-//import { Link } from 'react-router-dom'; // Import the Link component
 import { homeStyles } from '../styles/homeStyles';
 import { theme } from '../styles/darkTheme'; 
 import { ThemeProvider } from '@material-ui/core/styles';
 import categories from '../config/categoryConfig';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
-//import Category from './Category';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import { Link } from 'react-router-dom';
 
 export default function CategoryPicker() {
   const classes = homeStyles();
-  console.log(categories);
   return (
     <ThemeProvider theme={theme}>
       {/* <div className={classes.centerContainer}>
@@ -103,7 +101,9 @@ const Category = ({ title, quizzes }) => {
                 key={quiz.id}
                 variant="contained"
                 color="primary"
-                href={quiz.url} // You can use Link from react-router-dom here
+                component={Link}
+                to='/firebase-clue' 
+                state={quiz.url}
               >
                 {quiz.title}
               </Button>

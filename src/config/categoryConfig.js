@@ -17,7 +17,7 @@ const categories = [
       { 
         id: 1, 
         title: 'African Capitals', 
-        url: '/european-capitals' 
+        url: '/african_capitals' 
       },
       { 
         id: 2, 

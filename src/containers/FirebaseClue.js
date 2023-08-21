@@ -44,7 +44,6 @@ const FirebaseClue = () => {
 
   // Fetch data from Firebase database on component mount
   useEffect(() => {
-    console.log(category);
     setLoading(true);
     const database = firebase.database();
     const dataRef = database.ref('/'); 
@@ -52,12 +51,10 @@ const FirebaseClue = () => {
     dataRef.once('value')
       .then((snapshot) => {
         const fetchedData = snapshot.val();
-        const fetchedCategoryData = fetchedData[category];
-        console.log(fetchedCategoryData);
+        const fetchedCategoryData = fetchedData[category.substring(1)];
         const shuffledArray = fetchedCategoryData.sort((a, b) => 0.5 - Math.random());
         setCurClue(shuffledArray[0]);
         setClueQueue(shuffledArray);
-        //console.log(shuffledArray);
       })
       .catch((error) => {
         console.error('Error fetching data from Firebase:', error);
@@ -74,7 +71,6 @@ const FirebaseClue = () => {
   };
 
   const checkAnswer = () => {
-    console.log("check answer");
     const correctAnswer = curClue?.answer.toLowerCase();
     const userEnteredAnswer = userAnswer ? 
       userAnswer.trim().toLowerCase() : '';
@@ -107,7 +103,6 @@ const FirebaseClue = () => {
     updatedQueue.shift();
 
     // Check if we need to repeat a wrong answer
-    console.log('toggle, wasCorrect', repeatToggle, wasCorrect);
     if (repeatToggle && !wasCorrect) {
       updatedQueue = [...updatedQueue, curClue];
     }
@@ -119,7 +114,6 @@ const FirebaseClue = () => {
   };
 
   const handleUserAnswerChange = (event) => {
-    console.log("handle user answer change");
     setUserAnswer(event.target.value);
   };
 
