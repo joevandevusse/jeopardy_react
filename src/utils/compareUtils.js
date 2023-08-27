@@ -5,10 +5,10 @@ function compareAnswers(correctAnswer, userEnteredAnswer) {
 
   // Remove common words from both answers
   const commonWords = ['a', 'an', 'the'];
-  const regex = new RegExp(`\\b(${commonWords.join('|')})\\b`, 'gi');
+  const commonWordsRegex = new RegExp(`\\b(${commonWords.join('|')})\\b`, 'gi');
 
-  const cleanedCorrectAnswer = correctAnswer.replace(regex, '').trim();
-  const cleanedUserAnswer = userEnteredAnswer.replace(regex, '').trim();
+  const cleanedCorrectAnswer = correctAnswer.replace(commonWordsRegex, '').trim();
+  const cleanedUserAnswer = userEnteredAnswer.replace(commonWordsRegex, '').trim();
 
   // Remove special characters from both answers
   const specialCharsRegex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
@@ -23,6 +23,10 @@ function compareAnswers(correctAnswer, userEnteredAnswer) {
   const finalCleanedUserAnswer = finalUserAnswer.replace(htmlTagsRegex, '');
 
   // Check last names
+  if (finalCleanedCorrectAnswer.split(' ').slice(-1)[0].toLowerCase() ===
+      finalCleanedUserAnswer.toLowerCase()) {
+    return true;
+  }
 
   return finalCleanedCorrectAnswer.toLowerCase() === finalCleanedUserAnswer.toLowerCase();
 }
