@@ -1,6 +1,6 @@
 Bugs
-New line characters not translating
-Need to add answer_2, _3, etc options
+V New line characters not translating
+X Need to add answer_2, _3, etc options
 
 Quizzes
 V NCAAB Champions

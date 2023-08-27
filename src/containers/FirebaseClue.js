@@ -153,7 +153,8 @@ const FirebaseClue = () => {
                 <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
                   {categoryConfig[category]}
                 </Typography>
-                <Typography className={classes.whiteText} variant="body1">
+                {/* This stlye makes the newlines appear properly */}
+                <Typography className={classes.whiteText} variant="body1" style={{ whiteSpace: 'pre-line' }}>
                   {curClue?.question}
                 </Typography>
                 <TextField

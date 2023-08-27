@@ -266,7 +266,7 @@ const categories = [
       { 
         id: 28, 
         title: 'Lakes', 
-        url: '/rivers' 
+        url: '/lakes' 
       },
       { 
         id: 42, 
