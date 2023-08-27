@@ -18,17 +18,9 @@ export default function HomePage() {
             className={classes.button} 
             variant="contained"
             component={Link}
-            to="/firebase-clue" // Should be replaced by categories
+            to="/category-picker" // Should be replaced by categories
           >
             Study
-          </Button>
-          <Button 
-            className={classes.button} 
-            variant="contained"
-            component={Link}
-            to="/category-picker" // Just for testing
-          >
-            Category Test
           </Button>
           {/* Future - actual Jeopardy! games*/}
           <Button className={classes.button} variant="contained">Play</Button>

@@ -14,36 +14,6 @@ export default function CategoryPicker() {
   const classes = homeStyles();
   return (
     <ThemeProvider theme={theme}>
-      {/* <div className={classes.centerContainer}>
-        <Typography className={classes.title} variant="h2">
-          Categories
-        </Typography>
-        <span>
-          <Typography className={classes.title} variant="h5">
-            Capitals
-          </Typography>
-          <div className={classes.buttonContainer}>
-            <Button 
-              className={classes.button} 
-              variant="contained"
-              component={Link}
-              to="/firebase-clue"
-              state='african_capitals'
-            >
-              African Capitals
-            </Button>
-            <Button 
-              className={classes.button} 
-              variant="contained"
-              component={Link}
-              to="/firebase-clue"
-              state='european_capitals'
-            >
-              European Capitals
-            </Button>
-          </div>  
-        </span>
-      </div> */}  
       <Typography 
         className={classes.title} 
         variant="h2" 
