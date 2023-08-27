@@ -1,15 +1,3 @@
-// const categoryConfig = {
-//   african_capitals: "African Capitals",
-//   asian_capitals: "Asian Capitals",
-//   canadian_capitals: "Canadian Capitals",
-//   european_capitals: "European Capitals",
-//   north_american_capitals: "North American Capitals",
-//   oceania_capitals: "Oceania Capitals",
-//   south_american_capitals: "South American Capitals",
-//   us_capitals: "US Capitals",
-//   world_capitals: "World Capitals"
-// };
-
 const categories = [
   {
     title: 'Capitals',
@@ -70,37 +58,57 @@ const categories = [
     title: 'Government',
     quizzes: [
       { 
-        id: 10, 
+        id: 11, 
         title: 'US Presidents', 
         url: '/us_presidents' 
       },
       { 
-        id: 11, 
+        id: 68, 
+        title: 'US Vice Presidents', 
+        url: '/vice_presidents' 
+      },
+      { 
+        id: 69, 
+        title: 'US First Ladies', 
+        url: '/first_ladies' 
+      },
+      { 
+        id: 70, 
+        title: 'US Presidential Losers', 
+        url: '/presidential_losers' 
+      },
+      { 
+        id: 12, 
         title: 'US Amendments', 
         url: '/us_amendments' 
       },
       { 
-        id: 12, 
+        id: 13, 
         title: 'US Supreme Court Cases', 
         url: '/us_supreme_court_cases' 
       },
       { 
-        id: 13, 
+        id: 14, 
         title: 'US Congressional Acts', 
         url: '/us_congressional_acts' 
       },
       { 
-        id: 14, 
+        id: 71, 
+        title: 'US Cabinet Departments', 
+        url: '/cabinet_departments' 
+      },
+      { 
+        id: 15, 
         title: 'US Governors 2022', 
         url: '/us_governors_2022' 
       },
       { 
-        id: 15, 
+        id: 16, 
         title: 'US Senators 2022', 
         url: '/us_senators_2022' 
       },
       { 
-        id: 16, 
+        id: 17, 
         title: 'World Leaders 2022', 
         url: '/world_leaders_2022' 
       }
@@ -110,50 +118,45 @@ const categories = [
     title: 'Arts',
     quizzes: [
       { 
-        id: 17, 
+        id: 18, 
         title: 'Works of Literature', 
         url: '/works_of_literature' 
       },
       { 
-        id: 18, 
-        title: 'Painters', 
-        url: '/painters' 
-      },
-      { 
         id: 19, 
-        title: 'Composers', 
-        url: '/composers' 
-      },
-      { 
-        id: 20, 
         title: 'Authors', 
         url: '/authors' 
       },
       { 
-        id: 21, 
+        id: 20, 
         title: 'Literary Characters', 
         url: '/literary_characters' 
       },
       { 
-        id: 22, 
+        id: 21, 
         title: 'Artists', 
         url: '/artists' 
       },
       { 
+        id: 22, 
+        title: 'Painters', 
+        url: '/painters' 
+      },
+      { 
         id: 23, 
-        title: 'Authors', 
-        url: '/authors' 
+        title: 'Composers', 
+        url: '/composers' 
+      },
+      { 
+        id: 24, 
+        title: 'Operas', 
+        url: '/operas' 
       }
     ]
   },
   {
     title: 'Pop Culture',
     quizzes: [
-      { 
-        id: 24, 
-        title: 'Best-Selling Albums', 
-        url: '/best_selling_albums' 
-      },
       { 
         id: 25, 
         title: 'Oscar Best Picture Winners', 
@@ -162,33 +165,34 @@ const categories = [
       { 
         id: 26, 
         title: 'Highest Grossing Movies by Year', 
-        url: '/highest_grossing_movies_by_year' 
+        url: '/highest_grossing_movies' 
       },
       { 
         id: 27, 
-        title: 'FT Most Influential 2000s', 
-        url: '/ft_most_influential_2000s' 
+        title: 'TV Shows', 
+        url: '/tv_shows' 
       },
       { 
         id: 28, 
-        title: 'Literary Characters', 
-        url: '/literary_characters' 
-      },
-      { 
-        id: 29, 
         title: 'Grammy Songs of the Year', 
         url: '/grammy_songs_of_the_year' 
       },
       { 
+        id: 29, 
+        title: 'Best-Selling Albums', 
+        url: '/best_selling_albums' 
+      },
+      { 
         id: 30, 
-        title: 'Astrological Signs', 
-        url: '/astrological_signs' 
+        title: 'FT Most Influential 2000s', 
+        url: '/ft_most_influential_2000s' 
       },
       { 
         id: 31, 
-        title: 'TV Shows', 
-        url: '/tv_shows' 
+        title: 'Astrological Signs', 
+        url: '/astrological_signs' 
       }
+      
     ]
   },
   {
@@ -206,43 +210,53 @@ const categories = [
       },
       { 
         id: 34, 
+        title: 'Super Bowl Winners', 
+        url: '/nfl_champions' 
+      },
+      { 
+        id: 72, 
+        title: 'NFL Stadiums 2023', 
+        url: '/nfl_stadiums_2023' 
+      },
+      { 
+        id: 35, 
         title: 'NBA MVPs', 
         url: '/nba_mvps' 
       },
       { 
-        id: 35, 
+        id: 36, 
+        title: 'NBA Finals Champions', 
+        url: '/nba_champions' 
+      },
+      { 
+        id: 37, 
         title: 'MLB MVPs', 
         url: '/mlb_mvps' 
       },
       { 
-        id: 36, 
+        id: 38, 
+        title: 'World Series Champions', 
+        url: '/mlb_champions' 
+      },
+      { 
+        id: 39, 
         title: 'NHL MVPs', 
         url: '/nhl_mvps' 
       },
       { 
-        id: 37, 
+        id: 40, 
+        title: 'Stanley Cup Champions', 
+        url: '/nhl_champions' 
+      },
+      { 
+        id: 41, 
         title: 'NCAAF Champions', 
         url: '/ncaaf_champions' 
       },
       { 
-        id: 38, 
-        title: 'NFL Champions', 
-        url: '/nfl_champions' 
-      },
-      { 
-        id: 39, 
-        title: 'NBA Champions', 
-        url: '/nba_champions' 
-      },
-      { 
-        id: 40, 
-        title: 'MLB Champions', 
-        url: '/mlb_champions' 
-      },
-      { 
-        id: 41, 
-        title: 'NHL Champions', 
-        url: '/nhl_champions' 
+        id: 73, 
+        title: 'Heisman Trophy Winners', 
+        url: '/heisman_winners' 
       }
     ]
   },
@@ -250,14 +264,19 @@ const categories = [
     title: 'Geography',
     quizzes: [
       { 
+        id: 28, 
+        title: 'Lakes', 
+        url: '/rivers' 
+      },
+      { 
         id: 42, 
-        title: 'Deserts', 
-        url: '/deserts' 
+        title: 'Rivers', 
+        url: '/rivers' 
       },
       { 
         id: 43, 
-        title: 'Rivers', 
-        url: '/rivers' 
+        title: 'Deserts', 
+        url: '/deserts' 
       },
       { 
         id: 44, 
@@ -276,33 +295,33 @@ const categories = [
     quizzes: [
       { 
         id: 46, 
-        title: 'Mohs Scale of Hardness', 
-        url: '/mohs_scale_of_hardness' 
-      },
-      { 
-        id: 47, 
-        title: 'Geologic Time Scale', 
-        url: '/geologic_time_scale' 
-      },
-      { 
-        id: 48, 
-        title: 'Scientific Laws and Principles', 
-        url: '/scientific_laws_and_principles' 
-      },
-      { 
-        id: 49, 
         title: 'Periodic Table', 
         url: '/periodic_table' 
       },
       { 
-        id: 50, 
+        id: 47, 
+        title: 'Scientific Laws and Principles', 
+        url: '/scientific_laws_and_principles' 
+      },
+      { 
+        id: 48, 
+        title: 'Scientists', 
+        url: '/scientists' 
+      },
+      { 
+        id: 49, 
         title: 'Organelles', 
         url: '/organelles' 
       },
       { 
+        id: 50, 
+        title: 'Mohs Scale of Hardness', 
+        url: '/mohs_scale_of_hardness' 
+      },
+      { 
         id: 51, 
-        title: 'Scientists', 
-        url: '/scientists' 
+        title: 'Geologic Time Scale', 
+        url: '/geologic_time_scale' 
       }
     ]
   },
@@ -395,7 +414,7 @@ const categories = [
         url: '/roman_numerals' 
       },
       { 
-        id: 67, 
+        id: 67,
         title: 'NATO Spelling Alphabet', 
         url: '/nato_spelling_alphabet' 
       }

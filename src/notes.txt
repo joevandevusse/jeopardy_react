@@ -1,2 +1,16 @@
-NCAAB Champions
-Heisman Winners
+Bugs
+New line characters not translating
+Need to add answer_2, _3, etc options
+
+Quizzes
+V NCAAB Champions
+V Heisman Winners
+V Lakes
+V Vice Presidents
+V Presidential Losers
+V First Ladies
+V Stadium Names - NFL
+X Stadium Names - NBA
+X Stadium Names - MLB
+X Shakespeare Synopses
+X Emmy's, Oscar Actors
