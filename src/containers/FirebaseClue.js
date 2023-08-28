@@ -71,13 +71,10 @@ const FirebaseClue = () => {
   };
 
   const checkAnswer = () => {
-    const correctAnswer = curClue?.answer.toLowerCase();
-    const userEnteredAnswer = userAnswer ? 
-      userAnswer.trim().toLowerCase() : '';
-    
+    const userEnteredAnswer = userAnswer ? userAnswer.trim().toLowerCase() : '';
     setQuestionsAsked(questionsAsked + 1);
     let isCorrect = true;
-    if (compareAnswers(correctAnswer, userEnteredAnswer)) {
+    if (compareAnswers(curClue, userEnteredAnswer)) {
       setAnswerResult('Correct!');
       setNumCorrect(numCorrect + 1);
     } else {

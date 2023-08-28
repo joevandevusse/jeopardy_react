@@ -1,4 +1,15 @@
-function compareAnswers(correctAnswer, userEnteredAnswer) {
+function compareAnswers(clue, userEnteredAnswer) {
+  for (const answerOption in clue) {
+    if (answerOption === 'question') {
+      continue;
+    } else if (compareAnswer(clue[answerOption].toLowerCase(), userEnteredAnswer)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function compareAnswer(correctAnswer, userEnteredAnswer) {
   if (!correctAnswer || !userEnteredAnswer) {
     return false;
   }
