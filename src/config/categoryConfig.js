@@ -133,6 +133,11 @@ const categories = [
         url: '/literary_characters' 
       },
       { 
+        id: 74, 
+        title: 'Shakespeare Works', 
+        url: '/shakespeare_works' 
+      },
+      { 
         id: 21, 
         title: 'Artists', 
         url: '/artists' 

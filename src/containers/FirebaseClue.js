@@ -21,6 +21,7 @@ import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { useLocation } from 'react-router-dom';
 import categoryConfig from '../config/categoryConfig'; 
+import { Link } from 'react-router-dom';
 
 const FirebaseClue = () => {
   // console.count('useEffect calls');
@@ -121,7 +122,7 @@ const FirebaseClue = () => {
   if (!clueQueue) {
     return <Loading />
   } else if (gameOver) {
-    return <GameOver finalScore={`{((numCorrect / (questionsAsked + 1)) * 100).toFixed(0)}%`} />
+    return <GameOver finalScore={((numCorrect / (questionsAsked + 1)) * 100).toFixed(0)} />
   } else {
     return (
       <ThemeProvider theme={theme}>
@@ -223,25 +224,67 @@ export default FirebaseClue;
 function Loading() {
   const classes = useStyles();
   return (
-  <div className={classes.centerContainer}>
-      <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
-        Loading...
-      </Typography>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className={classes.centerContainer}>
+        <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
+          Loading...
+        </Typography>
+      </div>
+      <style>
+          {`
+            @media (prefers-color-scheme: dark) {
+              body, html {
+                background-color: #000000;
+              }
+            }
+
+            /* CSS transition for background color change */
+            .MuiTextField-root {
+              transition: background-color 0.2s ease;
+            }
+          `}
+        </style>
+    </ThemeProvider>
   );
 }
 
 function GameOver(props) {
   const classes = useStyles();
   return (
-    <div className={classes.centerContainer}>
-      <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
-        Game Over!
-      </Typography>
-      <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
-        Final Score: {props.finalScore}
-      </Typography>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className={classes.centerContainer}>
+        <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
+          Game Over!
+        </Typography>
+        <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
+          Final Score: {props.finalScore}%
+        </Typography>
+        <div className={classes.buttonContainer}>
+          <Button 
+            className={classes.button} 
+            variant="contained"
+            component={Link}
+            to="/"
+          >
+            Go Home
+          </Button>
+        </div>
+      </div>
+      <style>
+          {`
+            @media (prefers-color-scheme: dark) {
+              body, html {
+                background-color: #000000;
+              }
+            }
+
+            /* CSS transition for background color change */
+            .MuiTextField-root {
+              transition: background-color 0.2s ease;
+            }
+          `}
+        </style>
+    </ThemeProvider>
   );
 }
 
