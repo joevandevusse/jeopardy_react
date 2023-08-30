@@ -122,7 +122,7 @@ const FirebaseClue = () => {
   if (!clueQueue) {
     return <Loading />
   } else if (gameOver) {
-    return <GameOver finalScore={((numCorrect / (questionsAsked + 1)) * 100).toFixed(0)} />
+    return <GameOver finalScore={((numCorrect / questionsAsked) * 100).toFixed(0)} />
   } else {
     return (
       <ThemeProvider theme={theme}>
@@ -145,14 +145,16 @@ const FirebaseClue = () => {
                     Question: {questionsAsked + 1}/{questionsAsked + clueQueue.length}
                   </Typography>
                   <Typography variant="subtitle1" style={{ textAlign: 'right' , marginLeft: '16px' }}>
-                    Score: {((numCorrect / (questionsAsked + 1)) * 100).toFixed(0)}%
+                    Score: {questionsAsked === 0 ? "0" : 
+                      ( ((numCorrect / questionsAsked) * 100).toFixed(0) )}%
                   </Typography>
                 </div>
                 <Typography className={`${classes.categoryText} ${classes.whiteText}`} variant="h5">
                   {categoryConfig[category]}
                 </Typography>
                 {/* This stlye makes the newlines appear properly */}
-                <Typography className={classes.whiteText} variant="body1" style={{ whiteSpace: 'pre-line' }}>
+                <Typography className={classes.whiteText} variant="body1" 
+                  style={{ whiteSpace: 'pre-line' }}>
                   {curClue?.question}
                 </Typography>
                 <TextField
